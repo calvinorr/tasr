@@ -1,4 +1,4 @@
-# Visual Design - TARS Ecosystem
+# Visual Design - HAL Ecosystem
 
 ## CLI Output Style
 
@@ -6,7 +6,7 @@
 
 ```
 ╔═══════════════════════════════════════════╗
-║           TARS - Session Manager          ║
+║           HAL - Session Manager          ║
 ╠═══════════════════════════════════════════╣
 ║  1. Init    → Bootstrap Context Ecosystem ║
 ║  2. New     → Create Track (Spec → Plan)  ║
@@ -28,7 +28,7 @@
 ### Headers
 
 ```markdown
-## TARS Session Manager
+## HAL Session Manager
 
 **Status**: Active track loaded
 **Track**: feat-auth (Phase 2)

@@ -1,26 +1,26 @@
-# TARS: Context Engineering & Session Manager
+# HAL: Context Engineering & Session Manager
 
 **Role**: Manage project context and track development sessions.
-**Structure**: `tars/context/*.md` (static) & `tars/tracks/<ID>/*.md` (dynamic).
+**Structure**: `hal/context/*.md` (static) & `hal/tracks/<ID>/*.md` (dynamic).
 
 ## Auto-Start
-1. Check `tars/context/`. Missing → **Mode 1 (Init)**.
-2. Check `.claude/tars-state.json`. Show current track if active.
+1. Check `hal/context/`. Missing → **Mode 1 (Init)**.
+2. Check `.claude/hal-state.json`. Show current track if active.
 3. Display menu: `1.Init 2.New 3.Resume 4.End 5.Status 6.Review 7.Quick`
 
 ## Mode 1: Init
-Create `tars/context/` with: `mission.md`, `visuals.md`, `specs.md`, `protocols.md`.
-Create `tars/tracks/`, `tars/tracks/quick/`, `.claude/`.
+Create `hal/context/` with: `mission.md`, `visuals.md`, `specs.md`, `protocols.md`.
+Create `hal/tracks/`, `hal/tracks/quick/`, `.claude/`.
 
 ## Mode 2: New Track
 1. Ask objective → refine with `mission.md`
-2. Generate ID (e.g., `feat-auth`) → create `tars/tracks/<ID>/`
+2. Generate ID (e.g., `feat-auth`) → create `hal/tracks/<ID>/`
 3. Write `spec.md` and `plan.md` (format: `- [ ] Task <!-- commit: -->`)
 4. Optional: Visual review in browser (see below)
-5. User approves → update `.claude/tars-state.json`
+5. User approves → update `.claude/hal-state.json`
 
 ## Mode 3: Resume
-1. Read `tars/context/*.md` for grounding
+1. Read `hal/context/*.md` for grounding
 2. Load state + active `plan.md`
 3. Sync tasks to TodoWrite (plan.md is source of truth)
 4. Show next 3 tasks, execute, update plan.md on completion
@@ -35,11 +35,11 @@ List all tracks: `[ID] | [Phase] | [Status]`
 
 ## Mode 6: Senior Review
 Delegate to sub-agents (`planner`, `debugger`, `code-reviewer`) with context from specs + protocols.
-Prompt: `"Acting as [Agent], review the current diff against tars/context/protocols.md, focusing on [User Question]."`
+Prompt: `"Acting as [Agent], review the current diff against hal/context/protocols.md, focusing on [User Question]."`
 
 ## Mode 7: Quick
 For small tasks (bug fixes, typos, single-file changes). No spec, no approval, immediate execution.
-ID format: `quick-<date>-<n>`. Create `tars/tracks/quick/<ID>.md`:
+ID format: `quick-<date>-<n>`. Create `hal/tracks/quick/<ID>.md`:
 ```markdown
 # Quick: <objective>
 Started: <timestamp>
@@ -64,7 +64,7 @@ After creating plan, offer: "Open visual review? [y/n]"
 **Flow**:
 1. `./scripts/generate-review.sh <root> [track_id]` → creates `review.html`
 2. `python3 -m http.server 8766 &`
-3. Open `http://localhost:8766/tars/tracks/<ID>/review.html`
+3. Open `http://localhost:8766/hal/tracks/<ID>/review.html`
 4. User annotates (approve/delete/modify/comment tasks), clicks Approve/Request Changes
 5. Read result from DOM:
 ```javascript

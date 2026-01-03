@@ -1,16 +1,16 @@
 #!/bin/bash
 # update-plan.sh - Auto-update plan.md with commit hashes
 # Called by post-commit hook to log commit hashes next to completed tasks
-# Usage: ./update-plan.sh [TARS_ROOT]
+# Usage: ./update-plan.sh [HAL_ROOT]
 
 set -e
 
-TARS_ROOT="${1:-.}"
+HAL_ROOT="${1:-.}"
 
 # Find active track from state file
-STATE_FILE="$TARS_ROOT/.claude/tars-state.json"
+STATE_FILE="$HAL_ROOT/.claude/hal-state.json"
 if [ ! -f "$STATE_FILE" ]; then
-    # No state file, skip silently (not a TARS-managed project)
+    # No state file, skip silently (not a HAL-managed project)
     exit 0
 fi
 
@@ -24,9 +24,9 @@ fi
 
 # Determine plan file location
 if [ "$TRACK_TYPE" = "quick" ]; then
-    PLAN_FILE="$TARS_ROOT/tars/tracks/quick/$ACTIVE_TRACK.md"
+    PLAN_FILE="$HAL_ROOT/hal/tracks/quick/$ACTIVE_TRACK.md"
 else
-    PLAN_FILE="$TARS_ROOT/tars/tracks/$ACTIVE_TRACK/plan.md"
+    PLAN_FILE="$HAL_ROOT/hal/tracks/$ACTIVE_TRACK/plan.md"
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then
@@ -55,7 +55,7 @@ done < "$PLAN_FILE" > "$TEMP_FILE"
 # Only update if changes were made
 if ! diff -q "$PLAN_FILE" "$TEMP_FILE" > /dev/null 2>&1; then
     mv "$TEMP_FILE" "$PLAN_FILE"
-    echo "TARS: Updated plan.md with commit $COMMIT_HASH"
+    echo "HAL: Updated plan.md with commit $COMMIT_HASH"
 else
     rm "$TEMP_FILE"
 fi

@@ -34,7 +34,7 @@ Generate the review HTML from plan data.
 - [x] Create `scripts/generate-review.sh` <!-- commit: -->
 - [x] Inject plan JSON into HTML template <!-- commit: -->
 - [x] Handle special characters / escaping <!-- commit: -->
-- [x] Write to `tars/tracks/<id>/review.html` <!-- commit: -->
+- [x] Write to `hal/tracks/<id>/review.html` <!-- commit: -->
 
 ## Phase 4: Browser Integration
 

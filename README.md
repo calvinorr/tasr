@@ -1,10 +1,10 @@
-# TARS - Context Engineering & Session Manager
+# HAL - Context Engineering & Session Manager
 
 A Claude Code skill ecosystem for managing development sessions, tracking progress, preventing scope creep, and maintaining project context across conversations.
 
 ## Overview
 
-TARS (Task & Resource System) is a comprehensive session management system that helps you:
+HAL (Task & Resource System) is a comprehensive session management system that helps you:
 
 - **Maintain Context**: Project context persists across Claude Code sessions
 - **Track Progress**: Tasks and commits are logged to markdown files
@@ -14,8 +14,8 @@ TARS (Task & Resource System) is a comprehensive session management system that 
 ## Architecture
 
 ```
-TARS Ecosystem
-├── /tars (main command) ─────── Session management & planning
+HAL Ecosystem
+├── /hal (main command) ─────── Session management & planning
 ├── /jarvis ──────────────────── Alternative session manager (epic-based)
 ├── /test ────────────────────── Visual/E2E testing with Chrome
 ├── /db ──────────────────────── Database management (Turso/SQLite)
@@ -31,18 +31,18 @@ Copy commands and skills to your Claude Code config:
 
 ```bash
 # Create directories
-mkdir -p ~/.claude/commands ~/.claude/skills/tars-assistant
+mkdir -p ~/.claude/commands ~/.claude/skills/hal-assistant
 
 # Copy commands
 cp commands/*.md ~/.claude/commands/
 
 # Copy skill
-cp skills/tars-assistant/SKILL.md ~/.claude/skills/tars-assistant/
+cp skills/hal-assistant/SKILL.md ~/.claude/skills/hal-assistant/
 
 # Make scripts available globally (optional)
-mkdir -p ~/.claude/tars/scripts
-cp scripts/*.sh ~/.claude/tars/scripts/
-chmod +x ~/.claude/tars/scripts/*.sh
+mkdir -p ~/.claude/hal/scripts
+cp scripts/*.sh ~/.claude/hal/scripts/
+chmod +x ~/.claude/hal/scripts/*.sh
 ```
 
 ### Project-Level Install
@@ -54,21 +54,21 @@ For per-project installation with git hooks:
 /path/to/tasr/scripts/install-hooks.sh .
 
 # This creates:
-# - tars/scripts/ (helper scripts)
-# - tars/hooks/ (git hooks)
+# - hal/scripts/ (helper scripts)
+# - hal/hooks/ (git hooks)
 # - .git/hooks/post-commit (auto-logging)
 ```
 
 ## Usage
 
-### Starting TARS
+### Starting HAL
 
 ```bash
 # In Claude Code, invoke the command
-/tars
+/hal
 ```
 
-TARS will display a menu:
+HAL will display a menu:
 
 ```
 1. Init (Bootstrap Context Ecosystem)
@@ -85,7 +85,7 @@ TARS will display a menu:
 Creates the context ecosystem for your project:
 
 ```
-tars/
+hal/
 ├── context/
 │   ├── mission.md      # Product goals, user personas
 │   ├── visuals.md      # Design system, UI patterns
@@ -101,7 +101,7 @@ tars/
 Creates a spec and plan for a new feature:
 
 ```
-tars/tracks/feat-auth/
+hal/tracks/feat-auth/
 ├── spec.md    # What we're building and why
 └── plan.md    # Phased tasks with commit tracking
 ```
@@ -116,11 +116,11 @@ Plan format:
 
 ### Visual Plan Review (Optional)
 
-After creating a plan, TARS can open a browser-based review UI:
+After creating a plan, HAL can open a browser-based review UI:
 
 ```
 User: "y" to visual review prompt
-TARS: Opens http://localhost:8766/tars/tracks/<ID>/review.html
+HAL: Opens http://localhost:8766/hal/tracks/<ID>/review.html
 ```
 
 In the visual review UI, you can:
@@ -139,8 +139,8 @@ After approval, annotations are applied back to `plan.md`.
 
 Loads context and active track, syncs tasks to TodoWrite:
 
-1. Reads all `tars/context/*.md` files
-2. Loads active track from `.claude/tars-state.json`
+1. Reads all `hal/context/*.md` files
+2. Loads active track from `.claude/hal-state.json`
 3. Extracts tasks from `plan.md` → populates TodoWrite
 4. Shows next 3 pending tasks
 
@@ -150,7 +150,7 @@ Before clearing context:
 
 1. Audits git status
 2. Marks completed tasks in plan.md
-3. Saves state to `.claude/tars-state.json`
+3. Saves state to `.claude/hal-state.json`
 4. Prompts for commit/push
 
 ### Mode 7: Quick Mode
@@ -171,7 +171,7 @@ Started: 2025-01-03T10:00:00
 
 ## File Structure
 
-### State File (`.claude/tars-state.json`)
+### State File (`.claude/hal-state.json`)
 
 ```json
 {
@@ -190,10 +190,10 @@ Started: 2025-01-03T10:00:00
 
 | File | Purpose |
 |------|---------|
-| `tars/context/mission.md` | Product vision, goals, user personas |
-| `tars/context/visuals.md` | Design system, UI patterns, colors |
-| `tars/context/specs.md` | Tech stack, architecture decisions |
-| `tars/context/protocols.md` | Git workflow, testing standards, code style |
+| `hal/context/mission.md` | Product vision, goals, user personas |
+| `hal/context/visuals.md` | Design system, UI patterns, colors |
+| `hal/context/specs.md` | Tech stack, architecture decisions |
+| `hal/context/protocols.md` | Git workflow, testing standards, code style |
 
 ## Scripts
 
@@ -303,7 +303,7 @@ Creates:
 
 ## Scope Guardrails
 
-TARS prevents scope creep with guardrails defined in CLAUDE.md:
+HAL prevents scope creep with guardrails defined in CLAUDE.md:
 
 ```markdown
 ## Current Stage: Stage 1
@@ -316,9 +316,9 @@ TARS prevents scope creep with guardrails defined in CLAUDE.md:
 - Admin dashboard
 ```
 
-When you drift, TARS will:
+When you drift, HAL will:
 1. Acknowledge the idea
-2. Offer to save it to `tars/tracks/future-ideas.md`
+2. Offer to save it to `hal/tracks/future-ideas.md`
 3. Redirect to current scope
 4. Ask if you want to switch focus
 
@@ -346,7 +346,7 @@ Rules:
 
 ### Subagent Delegation (Mode 6)
 
-TARS suggests appropriate subagents:
+HAL suggests appropriate subagents:
 
 | Task Type | Subagent |
 |-----------|----------|
@@ -358,7 +358,7 @@ TARS suggests appropriate subagents:
 
 ### Skill Awareness
 
-Before tasks, TARS checks for applicable skills:
+Before tasks, HAL checks for applicable skills:
 
 | Task Type | Skill |
 |-----------|-------|
@@ -370,21 +370,21 @@ Before tasks, TARS checks for applicable skills:
 
 ## Tips
 
-1. **Always end sessions properly** - Run `/tars` option 4 before clearing context
+1. **Always end sessions properly** - Run `/hal` option 4 before clearing context
 2. **Use Quick mode for small tasks** - Don't over-engineer simple fixes
 3. **Keep context files updated** - They're read at every session start
 4. **Trust the process** - Scope guardrails are there to help
 
 ## Troubleshooting
 
-### "No tars-state.json found"
+### "No hal-state.json found"
 
-Run `/tars` and choose option 1 (Init) to bootstrap the project.
+Run `/hal` and choose option 1 (Init) to bootstrap the project.
 
 ### Tasks not syncing to TodoWrite
 
 Check that:
-1. `.claude/tars-state.json` has `activeTrack` set
+1. `.claude/hal-state.json` has `activeTrack` set
 2. The plan file exists at the expected path
 3. Tasks use the `- [ ]` checkbox format
 
@@ -397,7 +397,7 @@ Ensure git hooks are installed:
 
 ### Lost progress after session crash
 
-TARS stores `verifiedCriteria` in state file. On next session start, it will offer to recover.
+HAL stores `verifiedCriteria` in state file. On next session start, it will offer to recover.
 
 ## License
 

@@ -13,7 +13,7 @@ if [ -z "$PLAN_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
   exit 1
 fi
 
-# Extract track ID from path (e.g., tars/tracks/feat-auth/plan.md -> feat-auth)
+# Extract track ID from path (e.g., hal/tracks/feat-auth/plan.md -> feat-auth)
 TRACK_ID=$(basename "$(dirname "$PLAN_FILE")")
 
 # Extract track name from first # heading or use track ID

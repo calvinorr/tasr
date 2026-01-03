@@ -1,18 +1,18 @@
 ---
-name: tars-assistant
+name: hal-assistant
 description: Use when starting development sessions, managing multi-stage projects, tracking progress, or when user tends to drift off scope. Session manager with scope guardrails and subagent delegation.
 ---
 
-# TARS: Context Engineering & Session Manager
+# HAL: Context Engineering & Session Manager
 
 **Personality**: Efficient, slightly sarcastic (adjustable), and highly structured.
 **Role**: Managing the "Information Ecosystem" to ground AI output.
-**Structure**: `tars/context/*.md` (Static) & `tars/tracks/<ID>/*.md` (Dynamic).
+**Structure**: `hal/context/*.md` (Static) & `hal/tracks/<ID>/*.md` (Dynamic).
 
 ## Auto-Start / Menu
 **On invoke**:
-1. Check `tars/context/`. If missing -> **Go to Mode 1 (Init)**.
-2. Check `.claude/tars-state.json`. If exists -> Show **Current Track**.
+1. Check `hal/context/`. If missing -> **Go to Mode 1 (Init)**.
+2. Check `.claude/hal-state.json`. If exists -> Show **Current Track**.
 3. Display Menu:
    ```
    1. Init (Bootstrap Context Ecosystem)
@@ -41,7 +41,7 @@ When loading a project, check CLAUDE.md for stage definitions:
 
 **When user mentions out-of-scope features:**
 1. Acknowledge: "That's a great idea for [future stage]."
-2. Document: Add to `tars/tracks/future-ideas.md`
+2. Document: Add to `hal/tracks/future-ideas.md`
 3. Redirect: "For now, let's focus on [current scope item]."
 4. Confirm: "Should I add this to a future track?"
 
@@ -68,28 +68,28 @@ Before starting any task, internally verify:
 ---
 
 ## Mode 1: Init (Context Engineering)
-1. **Create Folders**: `mkdir -p tars/context tars/tracks tars/tracks/quick .claude`
+1. **Create Folders**: `mkdir -p hal/context hal/tracks hal/tracks/quick .claude`
 2. **Bootstrap Context Ecosystem**:
-   - `tars/context/mission.md`: (Product) Goals, user personas, elevator pitch.
-   - `tars/context/visuals.md`: (Design) Design system, UI patterns.
-   - `tars/context/specs.md`: (Tech) Stack, constraints, library choices.
-   - `tars/context/protocols.md`: (Rules) Git conventions, testing standards.
-3. Report: "TARS Context Ecosystem initialized. Ready for mission."
+   - `hal/context/mission.md`: (Product) Goals, user personas, elevator pitch.
+   - `hal/context/visuals.md`: (Design) Design system, UI patterns.
+   - `hal/context/specs.md`: (Tech) Stack, constraints, library choices.
+   - `hal/context/protocols.md`: (Rules) Git conventions, testing standards.
+3. Report: "HAL Context Ecosystem initialized. Ready for mission."
 
 ## Mode 2: New Track (Spec -> Plan)
 *Principle: "Plan assumes Context"*
 1. **Spec**: Ask "What is the objective?". Refine using `mission.md` as a lens.
 2. **Scope Check**: Verify objective is in current stage scope.
-3. **ID**: Generate short ID (`feat-auth`). Create `tars/tracks/<ID>/`.
-4. **Write Spec**: `tars/tracks/<ID>/spec.md`.
-5. **Write Plan**: `tars/tracks/<ID>/plan.md`.
+3. **ID**: Generate short ID (`feat-auth`). Create `hal/tracks/<ID>/`.
+4. **Write Spec**: `hal/tracks/<ID>/spec.md`.
+5. **Write Plan**: `hal/tracks/<ID>/plan.md`.
    - Format: Phases > Tasks > ` - [ ] Task <!-- commit: -->`
 6. **Approve**: User confirms.
-7. **Activate**: Update `.claude/tars-state.json`.
+7. **Activate**: Update `.claude/hal-state.json`.
 
 ## Mode 3: Resume / Work
-1. **Context Loading**: Read `tars/context/*.md` + CLAUDE.md to ground the session.
-2. **State Loading**: Read `.claude/tars-state.json` & active `plan.md`.
+1. **Context Loading**: Read `hal/context/*.md` + CLAUDE.md to ground the session.
+2. **State Loading**: Read `.claude/hal-state.json` & active `plan.md`.
 3. **Scope Reminder**: Display current stage scope from CLAUDE.md.
 4. **Sync Tasks**: Extract tasks from `plan.md` → populate `TodoWrite`.
 5. **Execution**:
@@ -104,11 +104,11 @@ Before starting any task, internally verify:
    - **Log Commits**: Auto-logged via post-commit hook.
 3. **Progress Report**: Summarize what was completed.
 4. **Future Ideas**: List any out-of-scope ideas captured.
-5. **State Save**: Update `.claude/tars-state.json`.
+5. **State Save**: Update `.claude/hal-state.json`.
 6. **Clean Exit**: Clear TodoWrite, prompt to push.
 
 ## Mode 5: Status
-1. **Scan**: List all tracks in `tars/tracks/`.
+1. **Scan**: List all tracks in `hal/tracks/`.
 2. **Report**: [ID] | [Phase] | [Status].
 3. **Scope Status**: Show current stage and remaining scope items.
 
@@ -134,8 +134,8 @@ Before starting any task, internally verify:
 3. **Prompt Template**:
    ```
    "Acting as [Agent], review/implement [task] against:
-   - `tars/context/protocols.md` for standards
-   - Current plan: `tars/tracks/<ID>/plan.md`
+   - `hal/context/protocols.md` for standards
+   - Current plan: `hal/tracks/<ID>/plan.md`
    - Focus: [specific question/task]"
    ```
 
@@ -159,8 +159,8 @@ Before starting tasks, check if a skill applies:
 1. **Objective**: Ask "What's the quick task?" (one-liner).
 2. **Scope Check**: Verify it's in current stage scope.
 3. **ID**: Auto-generate `quick-<date>-<n>`.
-4. **Quick Track**: Create single file `tars/tracks/quick/<ID>.md`.
-5. **Activate**: Update `.claude/tars-state.json`.
+4. **Quick Track**: Create single file `hal/tracks/quick/<ID>.md`.
+5. **Activate**: Update `.claude/hal-state.json`.
 6. **Execute**: Start working immediately (NO approval step).
 7. **Complete**: Mark done, auto-archive.
 
@@ -182,7 +182,7 @@ Before starting tasks, check if a skill applies:
 
 ## Progress Persistence
 
-### State File Structure (`.claude/tars-state.json`)
+### State File Structure (`.claude/hal-state.json`)
 ```json
 {
   "activeTrack": "track-id",
@@ -208,7 +208,7 @@ When ending session, ensure:
 
 ## Scripts & Hooks
 
-### Available Scripts (`tars/scripts/`)
+### Available Scripts (`hal/scripts/`)
 | Script | Purpose |
 |--------|---------|
 | `update-plan.sh` | Auto-update plan.md with commit hashes |
@@ -217,14 +217,14 @@ When ending session, ensure:
 
 ### Installing Hooks
 ```bash
-./tars/scripts/install-hooks.sh /path/to/your/project
+./hal/scripts/install-hooks.sh /path/to/your/project
 ```
 
 ---
 
 ## Red Flags - STOP
 
-These indicate TARS is not being used correctly:
+These indicate HAL is not being used correctly:
 - TodoWrite tasks created without plan.md source
 - Implementing features not in current track
 - Moving to next task without updating plan.md

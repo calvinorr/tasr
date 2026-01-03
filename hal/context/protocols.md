@@ -1,4 +1,4 @@
-# Protocols - TARS Ecosystem
+# Protocols - HAL Ecosystem
 
 ## Git Conventions
 

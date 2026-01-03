@@ -1,5 +1,5 @@
 #!/bin/bash
-# install-hooks.sh - Install TARS git hooks in a project
+# install-hooks.sh - Install HAL git hooks in a project
 # Usage: ./install-hooks.sh [PROJECT_PATH]
 
 set -e
@@ -19,7 +19,7 @@ fi
 
 GIT_HOOKS_DIR="$PROJECT_PATH/.git/hooks"
 
-echo "Installing TARS hooks to: $PROJECT_PATH"
+echo "Installing HAL hooks to: $PROJECT_PATH"
 echo "---"
 
 # Install post-commit hook
@@ -34,21 +34,21 @@ fi
 # Create the post-commit hook
 cat > "$POST_COMMIT_HOOK" << 'HOOK_CONTENT'
 #!/bin/bash
-# TARS post-commit hook
+# HAL post-commit hook
 # Updates plan.md with commit hashes
 
-# Find TARS scripts directory
-TARS_SCRIPTS=""
+# Find HAL scripts directory
+HAL_SCRIPTS=""
 
 # Check common locations
-if [ -d "./tars/scripts" ]; then
-    TARS_SCRIPTS="./tars/scripts"
-elif [ -d "$HOME/.claude/tars/scripts" ]; then
-    TARS_SCRIPTS="$HOME/.claude/tars/scripts"
+if [ -d "./hal/scripts" ]; then
+    HAL_SCRIPTS="./hal/scripts"
+elif [ -d "$HOME/.claude/hal/scripts" ]; then
+    HAL_SCRIPTS="$HOME/.claude/hal/scripts"
 fi
 
-if [ -n "$TARS_SCRIPTS" ] && [ -f "$TARS_SCRIPTS/update-plan.sh" ]; then
-    "$TARS_SCRIPTS/update-plan.sh" .
+if [ -n "$HAL_SCRIPTS" ] && [ -f "$HAL_SCRIPTS/update-plan.sh" ]; then
+    "$HAL_SCRIPTS/update-plan.sh" .
 fi
 HOOK_CONTENT
 
@@ -56,17 +56,17 @@ chmod +x "$POST_COMMIT_HOOK"
 echo "Installed: post-commit hook"
 
 # Copy the hooks to project's tars directory for portability
-mkdir -p "$PROJECT_PATH/tars/hooks"
-cp "$HOOKS_DIR/post-commit" "$PROJECT_PATH/tars/hooks/" 2>/dev/null || true
+mkdir -p "$PROJECT_PATH/hal/hooks"
+cp "$HOOKS_DIR/post-commit" "$PROJECT_PATH/hal/hooks/" 2>/dev/null || true
 
 # Copy scripts as well
-mkdir -p "$PROJECT_PATH/tars/scripts"
-cp "$SCRIPT_DIR/update-plan.sh" "$PROJECT_PATH/tars/scripts/"
-cp "$SCRIPT_DIR/parse-plan.sh" "$PROJECT_PATH/tars/scripts/"
-chmod +x "$PROJECT_PATH/tars/scripts/"*.sh
+mkdir -p "$PROJECT_PATH/hal/scripts"
+cp "$SCRIPT_DIR/update-plan.sh" "$PROJECT_PATH/hal/scripts/"
+cp "$SCRIPT_DIR/parse-plan.sh" "$PROJECT_PATH/hal/scripts/"
+chmod +x "$PROJECT_PATH/hal/scripts/"*.sh
 
 echo "---"
-echo "TARS hooks installed successfully!"
+echo "HAL hooks installed successfully!"
 echo ""
 echo "Hooks will:"
 echo "  - Auto-log commit hashes to plan.md after each commit"

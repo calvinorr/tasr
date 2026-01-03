@@ -1,4 +1,4 @@
-# Technical Specifications - TARS Ecosystem
+# Technical Specifications - HAL Ecosystem
 
 ## Stack
 

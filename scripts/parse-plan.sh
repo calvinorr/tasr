@@ -1,16 +1,16 @@
 #!/bin/bash
 # parse-plan.sh - Extract tasks from plan.md files
-# Usage: ./parse-plan.sh [TARS_ROOT] [--summary|--json|--pending]
+# Usage: ./parse-plan.sh [HAL_ROOT] [--summary|--json|--pending]
 
 set -e
 
-TARS_ROOT="${1:-.}"
+HAL_ROOT="${1:-.}"
 MODE="${2:---summary}"
 
 # Find active track from state file
-STATE_FILE="$TARS_ROOT/.claude/tars-state.json"
+STATE_FILE="$HAL_ROOT/.claude/hal-state.json"
 if [ ! -f "$STATE_FILE" ]; then
-    echo "Error: No tars-state.json found at $STATE_FILE"
+    echo "Error: No hal-state.json found at $STATE_FILE"
     exit 1
 fi
 
@@ -25,9 +25,9 @@ fi
 
 # Determine plan file location based on track type
 if [ "$TRACK_TYPE" = "quick" ]; then
-    PLAN_FILE="$TARS_ROOT/tars/tracks/quick/$ACTIVE_TRACK.md"
+    PLAN_FILE="$HAL_ROOT/hal/tracks/quick/$ACTIVE_TRACK.md"
 else
-    PLAN_FILE="$TARS_ROOT/tars/tracks/$ACTIVE_TRACK/plan.md"
+    PLAN_FILE="$HAL_ROOT/hal/tracks/$ACTIVE_TRACK/plan.md"
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then
@@ -91,7 +91,7 @@ case "$MODE" in
         grep '^\s*- \[ \]' "$PLAN_FILE" | sed 's/<!--.*-->//' | sed 's/^\s*- \[ \] /  - /'
         ;;
     *)
-        echo "Usage: $0 [TARS_ROOT] [--summary|--json|--pending]"
+        echo "Usage: $0 [HAL_ROOT] [--summary|--json|--pending]"
         exit 1
         ;;
 esac

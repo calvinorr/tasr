@@ -4,7 +4,7 @@
 # Usage: ./generate-review.sh <project_root> [track_id]
 # Output: Creates review.html in the track folder
 #
-# If track_id not provided, reads from .claude/tars-state.json
+# If track_id not provided, reads from .claude/hal-state.json
 
 set -e
 
@@ -17,28 +17,28 @@ PROJECT_ROOT="$(cd "$PROJECT_ROOT" && pwd)"
 
 # Get track ID from state if not provided
 if [ -z "$TRACK_ID" ]; then
-  STATE_FILE="$PROJECT_ROOT/.claude/tars-state.json"
+  STATE_FILE="$PROJECT_ROOT/.claude/hal-state.json"
   if [ -f "$STATE_FILE" ]; then
     TRACK_ID=$(grep -o '"activeTrack": *"[^"]*"' "$STATE_FILE" | sed 's/.*: *"//' | sed 's/"//')
   fi
 fi
 
 if [ -z "$TRACK_ID" ] || [ "$TRACK_ID" = "null" ]; then
-  echo "Error: No active track. Provide track_id or set activeTrack in tars-state.json" >&2
+  echo "Error: No active track. Provide track_id or set activeTrack in hal-state.json" >&2
   exit 1
 fi
 
 # Determine paths
-TRACK_DIR="$PROJECT_ROOT/tars/tracks/$TRACK_ID"
+TRACK_DIR="$PROJECT_ROOT/hal/tracks/$TRACK_ID"
 PLAN_FILE="$TRACK_DIR/plan.md"
 OUTPUT_FILE="$TRACK_DIR/review.html"
 
 # Check for quick track
 if [ ! -d "$TRACK_DIR" ]; then
-  QUICK_FILE="$PROJECT_ROOT/tars/tracks/quick/$TRACK_ID.md"
+  QUICK_FILE="$PROJECT_ROOT/hal/tracks/quick/$TRACK_ID.md"
   if [ -f "$QUICK_FILE" ]; then
     PLAN_FILE="$QUICK_FILE"
-    OUTPUT_FILE="$PROJECT_ROOT/tars/tracks/quick/$TRACK_ID-review.html"
+    OUTPUT_FILE="$PROJECT_ROOT/hal/tracks/quick/$TRACK_ID-review.html"
   else
     echo "Error: Track not found: $TRACK_ID" >&2
     exit 1
@@ -54,7 +54,7 @@ fi
 TEMPLATE_FILE="$PROJECT_ROOT/templates/plan-review.html"
 if [ ! -f "$TEMPLATE_FILE" ]; then
   # Try user-level location
-  TEMPLATE_FILE="$HOME/.claude/tars/templates/plan-review.html"
+  TEMPLATE_FILE="$HOME/.claude/hal/templates/plan-review.html"
 fi
 if [ ! -f "$TEMPLATE_FILE" ]; then
   # Try script directory sibling
@@ -63,7 +63,7 @@ fi
 if [ ! -f "$TEMPLATE_FILE" ]; then
   echo "Error: Template not found. Expected at:" >&2
   echo "  - $PROJECT_ROOT/templates/plan-review.html" >&2
-  echo "  - ~/.claude/tars/templates/plan-review.html" >&2
+  echo "  - ~/.claude/hal/templates/plan-review.html" >&2
   exit 1
 fi
 

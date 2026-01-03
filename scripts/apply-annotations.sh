@@ -20,9 +20,9 @@ fi
 PROJECT_ROOT="$(cd "$PROJECT_ROOT" && pwd)"
 
 # Get active track from state
-STATE_FILE="$PROJECT_ROOT/.claude/tars-state.json"
+STATE_FILE="$PROJECT_ROOT/.claude/hal-state.json"
 if [ ! -f "$STATE_FILE" ]; then
-  echo "Error: No tars-state.json found" >&2
+  echo "Error: No hal-state.json found" >&2
   exit 1
 fi
 
@@ -33,10 +33,10 @@ if [ -z "$TRACK_ID" ] || [ "$TRACK_ID" = "null" ]; then
 fi
 
 # Determine plan file path
-PLAN_FILE="$PROJECT_ROOT/tars/tracks/$TRACK_ID/plan.md"
+PLAN_FILE="$PROJECT_ROOT/hal/tracks/$TRACK_ID/plan.md"
 if [ ! -f "$PLAN_FILE" ]; then
   # Check for quick track
-  PLAN_FILE="$PROJECT_ROOT/tars/tracks/quick/$TRACK_ID.md"
+  PLAN_FILE="$PROJECT_ROOT/hal/tracks/quick/$TRACK_ID.md"
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then

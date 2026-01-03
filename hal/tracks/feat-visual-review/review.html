@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HAL Plan Review</title>
+  <title>TARS Plan Review</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -35,7 +35,7 @@
     <div class="max-w-4xl mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900 dark:text-white">HAL Plan Review</h1>
+          <h1 class="text-xl font-semibold text-gray-900 dark:text-white">TARS Plan Review</h1>
           <p class="text-sm text-gray-500 dark:text-gray-400" id="track-name">Track: loading...</p>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -107,12 +107,7 @@
 
   <script>
     // Plan data - will be injected by generator
-    const PLAN_DATA = {
-      trackId: "{{TRACK_ID}}",
-      trackName: "{{TRACK_NAME}}",
-      phases: []
-      // {{PLAN_JSON}}
-    };
+    const PLAN_DATA = { "trackId": "feat-visual-review", "trackName": "Visual Plan Review", "phases": [ { "name": "Phase 1: HTML Template", "tasks": [ {"text": "Create `templates/plan-review.html` base structure", "completed": true}, {"text": "Add Tailwind CSS via CDN for styling", "completed": true}, {"text": "Build phase/task card components", "completed": true}, {"text": "Add task action buttons (approve, delete, modify, comment)", "completed": true}, {"text": "Add global approve/reject buttons", "completed": true}, {"text": "Style states: pending, approved, flagged, deleted", "completed": true} ] }, { "name": "Phase 2: Plan Parser", "tasks": [ {"text": "Create `scripts/plan-to-json.sh` parser", "completed": true}, {"text": "Parse phases from `## Phase N:` headers", "completed": true}, {"text": "Parse tasks from `- [ ]` / `- [x]` checkboxes", "completed": true}, {"text": "Extract existing commit hashes", "completed": true}, {"text": "Output JSON structure for HTML injection", "completed": true} ] }, { "name": "Phase 3: HTML Generator", "tasks": [ {"text": "Create `scripts/generate-review.sh`", "completed": false}, {"text": "Inject plan JSON into HTML template", "completed": false}, {"text": "Handle special characters / escaping", "completed": false}, {"text": "Write to `tars/tracks/<id>/review.html`", "completed": false} ] }, { "name": "Phase 4: Browser Integration", "tasks": [ {"text": "Add review trigger to tars.md Mode 2 (after plan creation)", "completed": false}, {"text": "Open review.html via Claude-in-Chrome navigate", "completed": false}, {"text": "Wait for user interaction (approve/reject button click)", "completed": false}, {"text": "Read annotation state from DOM", "completed": false}, {"text": "Parse annotations back to structured data", "completed": false} ] }, { "name": "Phase 5: Plan Update", "tasks": [ {"text": "Create `scripts/apply-annotations.sh`", "completed": false}, {"text": "Handle deleted tasks (remove from plan)", "completed": false}, {"text": "Handle modified tasks (update description)", "completed": false}, {"text": "Handle comments (add as HTML comments or notes section)", "completed": false}, {"text": "Preserve commit hashes on approved tasks", "completed": false} ] }, { "name": "Phase 6: Polish & Documentation", "tasks": [ {"text": "Add keyboard shortcuts (Enter=approve, Esc=cancel)", "completed": false}, {"text": "Add confirmation dialog before destructive actions", "completed": false}, {"text": "Update README with visual review workflow", "completed": false}, {"text": "Add example screenshots to docs", "completed": false}, {"text": "Test full flow end-to-end", "completed": false} ] }, { "name": "Notes", "tasks": [ ] } ] } ;
 
     // State
     let taskStates = {}; // taskId -> { status, comment, originalText, modifiedText }

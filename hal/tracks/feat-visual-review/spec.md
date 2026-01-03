@@ -2,11 +2,11 @@
 
 ## Objective
 
-Add a browser-based visual review step to TARS plan approval, inspired by Plannotator. Users can annotate plans (delete, modify, comment) before execution begins.
+Add a browser-based visual review step to HAL plan approval, inspired by Plannotator. Users can annotate plans (delete, modify, comment) before execution begins.
 
 ## Problem
 
-Current TARS flow shows plans as markdown text in the terminal. Users must:
+Current HAL flow shows plans as markdown text in the terminal. Users must:
 - Read through walls of text
 - Mentally track what they want to change
 - Verbally communicate modifications back
@@ -15,7 +15,7 @@ This creates friction and makes plan review feel like a chore rather than collab
 
 ## Solution
 
-When TARS creates a plan, offer to open a visual review UI in the browser (via Claude-in-Chrome). The UI displays:
+When HAL creates a plan, offer to open a visual review UI in the browser (via Claude-in-Chrome). The UI displays:
 - Plan phases and tasks in a clean layout
 - Interactive controls for each task (approve, delete, modify, comment)
 - Clear approve/reject buttons at the bottom
@@ -26,13 +26,13 @@ Annotations are captured and fed back to update the plan.
 
 ```
 1. User: "Build auth system"
-2. TARS: Creates spec.md and plan.md
-3. TARS: "Open visual review? [y/n]"
+2. HAL: Creates spec.md and plan.md
+3. HAL: "Open visual review? [y/n]"
 4. User: "y"
-5. TARS: Opens plan-review.html in browser
+5. HAL: Opens plan-review.html in browser
 6. User: Clicks to annotate tasks, adds comments
 7. User: Clicks "Approve" or "Request Changes"
-8. TARS: Updates plan.md with annotations, proceeds or iterates
+8. HAL: Updates plan.md with annotations, proceeds or iterates
 ```
 
 ## UI Requirements

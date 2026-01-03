@@ -1,4 +1,4 @@
-# Mission - TARS Ecosystem
+# Mission - HAL Ecosystem
 
 ## Product Vision
 
@@ -25,7 +25,7 @@ A Claude Code skill ecosystem for managing development sessions, tracking progre
 
 ## Elevator Pitch
 
-"TARS keeps you on track during development sessions by managing context, preventing scope creep, and ensuring progress is saved across Claude Code sessions."
+"HAL keeps you on track during development sessions by managing context, preventing scope creep, and ensuring progress is saved across Claude Code sessions."
 
 ## Success Metrics
 
