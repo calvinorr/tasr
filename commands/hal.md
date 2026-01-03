@@ -3,6 +3,23 @@
 **Role**: Manage project context and track development sessions.
 **Structure**: `hal/context/*.md` (static) & `hal/tracks/<ID>/*.md` (dynamic).
 
+## Help
+If user says `/hal help`, show:
+```
+HAL - Session Manager
+─────────────────────
+1. Init    Create hal/context/ files
+2. New     Spec → Plan → Execute
+3. Resume  Load active track
+4. End     Save state, commit
+5. Status  List all tracks
+6. Review  Delegate to sub-agents
+7. Quick   Fast mode (no spec)
+
+Files: hal/context/*.md, hal/tracks/<ID>/
+State: .claude/hal-state.json
+```
+
 ## Auto-Start
 1. Check `hal/context/`. Missing → **Mode 1 (Init)**.
 2. Check `.claude/hal-state.json`. Show current track if active.
