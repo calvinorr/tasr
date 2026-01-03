@@ -47,7 +47,9 @@ Create `hal/tracks/`, `hal/tracks/quick/`, `.claude/`.
 1. Read `hal/context/*.md` for grounding
 2. Load state + active `plan.md`
 3. Sync tasks to TodoWrite (plan.md is source of truth)
-4. Show next 3 tasks, execute, update plan.md on completion
+4. Show next 3 tasks, execute
+5. After completing task: mark `[x]` in plan.md, then regenerate review:
+   `./scripts/generate-review.sh . <ID>` → progress visible at review.html
 
 ## Mode 4: End Session
 1. `git status` audit
