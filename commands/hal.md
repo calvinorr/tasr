@@ -9,7 +9,7 @@ If user says `/hal help`, show:
 HAL - Session Manager
 ─────────────────────
 1. Init    Create hal/context/ files
-2. New     Spec → Plan → Execute
+2. New     Spec → Plan → Visual Review → Execute
 3. Resume  Load active track
 4. End     Save state, commit
 5. Status  List all tracks
@@ -33,8 +33,15 @@ Create `hal/tracks/`, `hal/tracks/quick/`, `.claude/`.
 1. Ask objective → refine with `mission.md`
 2. Generate ID (e.g., `feat-auth`) → create `hal/tracks/<ID>/`
 3. Write `spec.md` and `plan.md` (format: `- [ ] Task <!-- commit: -->`)
-4. Optional: Visual review in browser (see below)
-5. User approves → update `.claude/hal-state.json`
+4. **Visual Review**:
+   - Run: `./scripts/generate-review.sh . <ID>`
+   - Run: `python3 -m http.server 8766 &` (if not running)
+   - Open in browser: `http://localhost:8766/hal/tracks/<ID>/review.html`
+   - User annotates tasks, clicks **Approve** or **Request Changes**
+   - Read result: `document.body.dataset.planStatus` and `document.body.dataset.planResult`
+   - If changes requested → update plan.md, regenerate, repeat
+   - If approved → apply annotations: `./scripts/apply-annotations.sh . '<json>'`
+5. Update `.claude/hal-state.json` with active track
 
 ## Mode 3: Resume
 1. Read `hal/context/*.md` for grounding
@@ -62,7 +69,6 @@ ID format: `quick-<date>-<n>`. Create `hal/tracks/quick/<ID>.md`:
 Started: <timestamp>
 ## Tasks
 - [ ] Task 1 <!-- commit: -->
-- [ ] Task 2 <!-- commit: -->
 ## Notes
 (optional)
 ```
@@ -73,29 +79,3 @@ Started: <timestamp>
 - **plan.md** is the single source of truth
 - TodoWrite syncs from plan.md (never create tasks manually)
 - Mark `[x]` in plan.md first, then update TodoWrite
-- Commit hashes auto-logged via post-commit hook
-
-## Visual Plan Review
-After creating plan, offer: "Open visual review? [y/n]"
-
-**Flow**:
-1. `./scripts/generate-review.sh <root> [track_id]` → creates `review.html`
-2. `python3 -m http.server 8766 &`
-3. Open `http://localhost:8766/hal/tracks/<ID>/review.html`
-4. User annotates (approve/delete/modify/comment tasks), clicks Approve/Request Changes
-5. Read result from DOM:
-```javascript
-const status = document.body.dataset.planStatus; // 'approved' or 'changes_requested'
-const result = JSON.parse(document.body.dataset.planResult);
-// result.annotations = { "0-0": { status, comment, modifiedText }, ... }
-```
-6. Apply: `./scripts/apply-annotations.sh <root> '<json>'`
-
-## Scripts
-| Script | Purpose |
-|--------|---------|
-| `parse-plan.sh` | Extract tasks from plan.md |
-| `update-plan.sh` | Auto-add commit hashes |
-| `generate-review.sh` | Create visual review HTML |
-| `apply-annotations.sh` | Apply review annotations |
-| `install-hooks.sh` | Install git post-commit hook |
