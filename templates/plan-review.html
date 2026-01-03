@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TARS Plan Review</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              light: '#f9fafb',
+              dark: '#1f2937'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .task-deleted { text-decoration: line-through; opacity: 0.5; }
+    .task-approved { border-left-color: #10b981 !important; }
+    .task-flagged { border-left-color: #f59e0b !important; }
+    .task-modified { border-left-color: #3b82f6 !important; }
+    .phase-collapsed .phase-tasks { display: none; }
+    .phase-collapsed .collapse-icon { transform: rotate(-90deg); }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold text-gray-900 dark:text-white">TARS Plan Review</h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400" id="track-name">Track: loading...</p>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <span id="task-count">0 tasks</span>
+          <span class="text-gray-300 dark:text-gray-600">|</span>
+          <span id="approved-count">0 approved</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Plan Container -->
+    <div id="plan-container" class="space-y-6">
+      <!-- Phases will be injected here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-12">
+      <p class="text-gray-500 dark:text-gray-400">No plan data loaded</p>
+    </div>
+  </main>
+
+  <!-- Footer Actions -->
+  <footer class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button onclick="approveAll()" class="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400">
+            Approve remaining
+          </button>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="requestChanges()" id="btn-changes" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
+            Request Changes
+          </button>
+          <button onclick="approvePlan()" id="btn-approve" class="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+            Approve Plan
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Comment Modal -->
+  <div id="comment-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add Comment</h3>
+      <textarea id="comment-input" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your comment..."></textarea>
+      <div class="flex justify-end gap-3 mt-4">
+        <button onclick="closeCommentModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+        <button onclick="saveComment()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modify Modal -->
+  <div id="modify-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Modify Task</h3>
+      <input type="text" id="modify-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Task description...">
+      <div class="flex justify-end gap-3 mt-4">
+        <button onclick="closeModifyModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+        <button onclick="saveModify()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Plan data - will be injected by generator
+    const PLAN_DATA = {
+      trackId: "{{TRACK_ID}}",
+      trackName: "{{TRACK_NAME}}",
+      phases: []
+      // {{PLAN_JSON}}
+    };
+
+    // State
+    let taskStates = {}; // taskId -> { status, comment, originalText, modifiedText }
+    let currentTaskId = null;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPlan();
+      updateCounts();
+      setupKeyboardShortcuts();
+    });
+
+    function renderPlan() {
+      const container = document.getElementById('plan-container');
+      const trackNameEl = document.getElementById('track-name');
+
+      trackNameEl.textContent = `Track: ${PLAN_DATA.trackName || PLAN_DATA.trackId}`;
+
+      if (!PLAN_DATA.phases || PLAN_DATA.phases.length === 0) {
+        document.getElementById('empty-state').classList.remove('hidden');
+        return;
+      }
+
+      // Initialize task states BEFORE rendering
+      PLAN_DATA.phases.forEach((phase, phaseIdx) => {
+        phase.tasks.forEach((task, taskIdx) => {
+          const taskId = `${phaseIdx}-${taskIdx}`;
+          taskStates[taskId] = {
+            status: task.completed ? 'approved' : 'pending',
+            comment: '',
+            originalText: task.text,
+            modifiedText: task.text
+          };
+        });
+      });
+
+      container.innerHTML = PLAN_DATA.phases.map((phase, phaseIdx) => `
+        <div class="phase bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden" data-phase="${phaseIdx}">
+          <button onclick="togglePhase(${phaseIdx})" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-gray-750 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <div class="flex items-center gap-3">
+              <svg class="collapse-icon w-4 h-4 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+              <span class="font-medium text-gray-900 dark:text-white">${phase.name}</span>
+            </div>
+            <span class="text-sm text-gray-500 dark:text-gray-400">${phase.tasks.length} tasks</span>
+          </button>
+          <div class="phase-tasks divide-y divide-gray-100 dark:divide-gray-700">
+            ${phase.tasks.map((task, taskIdx) => renderTask(task, phaseIdx, taskIdx)).join('')}
+          </div>
+        </div>
+      `).join('');
+
+    }
+
+    function renderTask(task, phaseIdx, taskIdx) {
+      const taskId = `${phaseIdx}-${taskIdx}`;
+      const state = taskStates[taskId] || { status: 'pending' };
+
+      return `
+        <div id="task-${taskId}" class="task px-4 py-3 border-l-4 border-transparent ${getTaskClass(state.status)}" data-task-id="${taskId}">
+          <div class="flex items-start gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="task-text text-gray-900 dark:text-white">${task.text}</p>
+              ${task.commit ? `<p class="text-xs text-gray-400 mt-1">commit: ${task.commit}</p>` : ''}
+              <p class="task-comment text-sm text-blue-600 dark:text-blue-400 mt-1 hidden"></p>
+            </div>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <button onclick="setTaskStatus('${taskId}', 'approved')" class="p-1.5 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-gray-400 hover:text-green-600" title="Approve">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              </button>
+              <button onclick="setTaskStatus('${taskId}', 'deleted')" class="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-600" title="Delete">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+              <button onclick="openModifyModal('${taskId}')" class="p-1.5 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-400 hover:text-blue-600" title="Modify">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+              </button>
+              <button onclick="openCommentModal('${taskId}')" class="p-1.5 rounded hover:bg-yellow-100 dark:hover:bg-yellow-900/30 text-gray-400 hover:text-yellow-600" title="Comment">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function getTaskClass(status) {
+      const classes = {
+        pending: '',
+        approved: 'task-approved bg-green-50 dark:bg-green-900/10',
+        deleted: 'task-deleted bg-red-50 dark:bg-red-900/10',
+        flagged: 'task-flagged bg-yellow-50 dark:bg-yellow-900/10',
+        modified: 'task-modified bg-blue-50 dark:bg-blue-900/10'
+      };
+      return classes[status] || '';
+    }
+
+    function setTaskStatus(taskId, status) {
+      if (!taskStates[taskId]) taskStates[taskId] = {};
+      taskStates[taskId].status = status;
+
+      const taskEl = document.getElementById(`task-${taskId}`);
+      taskEl.className = `task px-4 py-3 border-l-4 border-transparent ${getTaskClass(status)}`;
+
+      updateCounts();
+    }
+
+    function togglePhase(phaseIdx) {
+      const phaseEl = document.querySelector(`[data-phase="${phaseIdx}"]`);
+      phaseEl.classList.toggle('phase-collapsed');
+    }
+
+    function openCommentModal(taskId) {
+      currentTaskId = taskId;
+      document.getElementById('comment-input').value = taskStates[taskId]?.comment || '';
+      document.getElementById('comment-modal').classList.remove('hidden');
+      document.getElementById('comment-input').focus();
+    }
+
+    function closeCommentModal() {
+      document.getElementById('comment-modal').classList.add('hidden');
+      currentTaskId = null;
+    }
+
+    function saveComment() {
+      if (!currentTaskId) return;
+      const comment = document.getElementById('comment-input').value.trim();
+      taskStates[currentTaskId].comment = comment;
+
+      if (comment) {
+        setTaskStatus(currentTaskId, 'flagged');
+        const commentEl = document.querySelector(`#task-${currentTaskId} .task-comment`);
+        commentEl.textContent = `Comment: ${comment}`;
+        commentEl.classList.remove('hidden');
+      }
+
+      closeCommentModal();
+    }
+
+    function openModifyModal(taskId) {
+      currentTaskId = taskId;
+      document.getElementById('modify-input').value = taskStates[taskId]?.modifiedText || taskStates[taskId]?.originalText || '';
+      document.getElementById('modify-modal').classList.remove('hidden');
+      document.getElementById('modify-input').focus();
+    }
+
+    function closeModifyModal() {
+      document.getElementById('modify-modal').classList.add('hidden');
+      currentTaskId = null;
+    }
+
+    function saveModify() {
+      if (!currentTaskId) return;
+      const newText = document.getElementById('modify-input').value.trim();
+
+      if (newText && newText !== taskStates[currentTaskId].originalText) {
+        taskStates[currentTaskId].modifiedText = newText;
+        setTaskStatus(currentTaskId, 'modified');
+        document.querySelector(`#task-${currentTaskId} .task-text`).textContent = newText;
+      }
+
+      closeModifyModal();
+    }
+
+    function updateCounts() {
+      const total = Object.keys(taskStates).length;
+      const approved = Object.values(taskStates).filter(s => s.status === 'approved').length;
+
+      document.getElementById('task-count').textContent = `${total} tasks`;
+      document.getElementById('approved-count').textContent = `${approved} approved`;
+    }
+
+    function approveAll() {
+      Object.keys(taskStates).forEach(taskId => {
+        if (taskStates[taskId].status === 'pending') {
+          setTaskStatus(taskId, 'approved');
+        }
+      });
+    }
+
+    function approvePlan() {
+      // Store result in a way Claude can read
+      const result = {
+        action: 'approve',
+        annotations: taskStates,
+        timestamp: new Date().toISOString()
+      };
+
+      // Set data attribute for Claude to read
+      document.body.dataset.planResult = JSON.stringify(result);
+      document.body.dataset.planStatus = 'approved';
+
+      // Visual feedback
+      document.getElementById('btn-approve').textContent = 'Approved!';
+      document.getElementById('btn-approve').disabled = true;
+      document.getElementById('btn-approve').classList.replace('bg-green-600', 'bg-green-800');
+    }
+
+    function requestChanges() {
+      const result = {
+        action: 'changes_requested',
+        annotations: taskStates,
+        timestamp: new Date().toISOString()
+      };
+
+      document.body.dataset.planResult = JSON.stringify(result);
+      document.body.dataset.planStatus = 'changes_requested';
+
+      document.getElementById('btn-changes').textContent = 'Changes Requested';
+      document.getElementById('btn-changes').disabled = true;
+    }
+
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Enter to approve when no modal open
+        if (e.key === 'Enter' && !currentTaskId) {
+          approvePlan();
+        }
+        // Escape to close modals or request changes
+        if (e.key === 'Escape') {
+          if (currentTaskId) {
+            closeCommentModal();
+            closeModifyModal();
+          }
+        }
+      });
+    }
+  </script>
+
+  <!-- Padding for fixed footer -->
+  <div class="h-20"></div>
+</body>
+</html>

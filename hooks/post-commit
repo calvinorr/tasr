@@ -1,0 +1,27 @@
+#!/bin/bash
+# TARS post-commit hook
+# Updates plan.md with commit hashes after each commit
+
+# Find project root (where .git is)
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -z "$PROJECT_ROOT" ]; then
+    exit 0
+fi
+
+# Find TARS scripts directory
+TARS_SCRIPTS=""
+
+# Check project-local tars directory first
+if [ -d "$PROJECT_ROOT/tars/scripts" ]; then
+    TARS_SCRIPTS="$PROJECT_ROOT/tars/scripts"
+# Then check user's .claude directory
+elif [ -d "$HOME/.claude/tars/scripts" ]; then
+    TARS_SCRIPTS="$HOME/.claude/tars/scripts"
+# Finally check if installed globally
+elif [ -d "$HOME/Dev/Projects/tasr/scripts" ]; then
+    TARS_SCRIPTS="$HOME/Dev/Projects/tasr/scripts"
+fi
+
+if [ -n "$TARS_SCRIPTS" ] && [ -f "$TARS_SCRIPTS/update-plan.sh" ]; then
+    "$TARS_SCRIPTS/update-plan.sh" "$PROJECT_ROOT"
+fi

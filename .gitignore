@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+
+# Editor
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Generated review files (regenerate as needed)
+tars/tracks/*/review.html
+tars/tracks/quick/*-review.html
+
+# Temp files
+*.tmp
+*.bak
