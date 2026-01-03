@@ -35,9 +35,20 @@ List all tracks: `[ID] | [Phase] | [Status]`
 
 ## Mode 6: Senior Review
 Delegate to sub-agents (`planner`, `debugger`, `code-reviewer`) with context from specs + protocols.
+Prompt: `"Acting as [Agent], review the current diff against tars/context/protocols.md, focusing on [User Question]."`
 
 ## Mode 7: Quick
-For small tasks. Create `tars/tracks/quick/<ID>.md` with flat task list. No spec, no approval, immediate execution.
+For small tasks (bug fixes, typos, single-file changes). No spec, no approval, immediate execution.
+ID format: `quick-<date>-<n>`. Create `tars/tracks/quick/<ID>.md`:
+```markdown
+# Quick: <objective>
+Started: <timestamp>
+## Tasks
+- [ ] Task 1 <!-- commit: -->
+- [ ] Task 2 <!-- commit: -->
+## Notes
+(optional)
+```
 
 ---
 
@@ -54,8 +65,13 @@ After creating plan, offer: "Open visual review? [y/n]"
 1. `./scripts/generate-review.sh <root> [track_id]` → creates `review.html`
 2. `python3 -m http.server 8766 &`
 3. Open `http://localhost:8766/tars/tracks/<ID>/review.html`
-4. User annotates (approve/delete/modify/comment tasks)
-5. Read result: `document.body.dataset.planResult` (JSON)
+4. User annotates (approve/delete/modify/comment tasks), clicks Approve/Request Changes
+5. Read result from DOM:
+```javascript
+const status = document.body.dataset.planStatus; // 'approved' or 'changes_requested'
+const result = JSON.parse(document.body.dataset.planResult);
+// result.annotations = { "0-0": { status, comment, modifiedText }, ... }
+```
 6. Apply: `./scripts/apply-annotations.sh <root> '<json>'`
 
 ## Scripts
